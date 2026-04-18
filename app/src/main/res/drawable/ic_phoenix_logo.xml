@@ -5,132 +5,105 @@
     android:viewportWidth="200"
     android:viewportHeight="200">
 
-    <defs>
-        <linearGradient id="phoenixGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop android:offset="0%" android:color="#FF9D42"/>
-            <stop android:offset="100%" android:color="#E87B18"/>
-        </linearGradient>
-    </defs>
+    <path
+        android:pathData="M100,85 L60,45"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="3"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M60,45 L40,35"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M40,35 L50,55"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M50,49 A6,6 0 1,1 50,61 A6,6 0 1,1 50,49"
+        android:fillColor="#FF9D42"/>
 
-    <!-- Phoenix Logo - Line art with nodes -->
-    <group>
-        <!-- Upper Left Wing -->
-        <path
-            android:pathData="M100,85 L60,45"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="3"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M60,45 L40,35"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2.5"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M40,35 L50,55"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2"
-            android:fillColor="#00000000"/>
-        <circle
-            android:cx="50" android:cy="55"
-            android:r="6"
-            android:fillColor="@color/phoenix_orange"/>
+    <path
+        android:pathData="M100,85 L140,45"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="3"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M140,45 L160,35"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M160,35 L150,55"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M150,49 A6,6 0 1,1 150,61 A6,6 0 1,1 150,49"
+        android:fillColor="#FF9D42"/>
 
-        <!-- Upper Right Wing -->
-        <path
-            android:pathData="M100,85 L140,45"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="3"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M140,45 L160,35"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2.5"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M160,35 L150,55"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2"
-            android:fillColor="#00000000"/>
-        <circle
-            android:cx="150" android:cy="55"
-            android:r="6"
-            android:fillColor="@color/phoenix_orange"/>
+    <path
+        android:pathData="M100,60 L100,100"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="4"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M100,85 A15,15 0 1,1 100,115 A15,15 0 1,1 100,85"
+        android:fillColor="#FF9D42"/>
 
-        <!-- Central Body -->
-        <path
-            android:pathData="M100,60 L100,100"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="4"
-            android:fillColor="#00000000"/>
-        <circle
-            android:cx="100" android:cy="100"
-            android:r="15"
-            android:fillColor="@color/phoenix_orange"/>
+    <path
+        android:pathData="M100,115 L70,145"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="3"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M70,145 L55,165"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M55,165 L45,155"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M45,150 A5,5 0 1,1 45,160 A5,5 0 1,1 45,150"
+        android:fillColor="#FF9D42"/>
 
-        <!-- Lower Left Wing -->
-        <path
-            android:pathData="M100,115 L70,145"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="3"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M70,145 L55,165"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2.5"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M55,165 L45,155"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2"
-            android:fillColor="#00000000"/>
-        <circle
-            android:cx="45" android:cy="155"
-            android:r="5"
-            android:fillColor="@color/phoenix_orange"/>
+    <path
+        android:pathData="M100,115 L130,145"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="3"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M130,145 L145,165"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2.5"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M145,165 L155,155"
+        android:strokeColor="#FF9D42"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M155,150 A5,5 0 1,1 155,160 A5,5 0 1,1 155,150"
+        android:fillColor="#FF9D42"/>
 
-        <!-- Lower Right Wing -->
-        <path
-            android:pathData="M100,115 L130,145"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="3"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M130,145 L145,165"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2.5"
-            android:fillColor="#00000000"/>
-        <path
-            android:pathData="M145,165 L155,155"
-            android:strokeColor="@color/phoenix_orange"
-            android:strokeWidth="2"
-            android:fillColor="#00000000"/>
-        <circle
-            android:cx="155" android:cy="155"
-            android:r="5"
-            android:fillColor="@color/phoenix_orange"/>
+    <path
+        android:pathData="M40,31 A4,4 0 1,1 40,39 A4,4 0 1,1 40,31"
+        android:fillColor="#FF9D42"/>
+    <path
+        android:pathData="M160,31 A4,4 0 1,1 160,39 A4,4 0 1,1 160,31"
+        android:fillColor="#FF9D42"/>
+    <path
+        android:pathData="M55,161 A4,4 0 1,1 55,169 A4,4 0 1,1 55,161"
+        android:fillColor="#FF9D42"/>
+    <path
+        android:pathData="M145,161 A4,4 0 1,1 145,169 A4,4 0 1,1 145,161"
+        android:fillColor="#FF9D42"/>
 
-        <!-- Outer nodes -->
-        <circle
-            android:cx="40" android:cy="35"
-            android:r="4"
-            android:fillColor="@color/phoenix_orange"/>
-        <circle
-            android:cx="160" android:cy="35"
-            android:r="4"
-            android:fillColor="@color/phoenix_orange"/>
-        <circle
-            android:cx="55" android:cy="165"
-            android:r="4"
-            android:fillColor="@color/phoenix_orange"/>
-        <circle
-            android:cx="145" android:cy="165"
-            android:r="4"
-            android:fillColor="@color/phoenix_orange"/>
-
-        <!-- Center glow -->
-        <circle
-            android:cx="100" android:cy="100"
-            android:r="25"
-            android:fillColor="#80FF9D42"/>
-    </group>
+    <path
+        android:pathData="M100,75 A25,25 0 1,1 100,125 A25,25 0 1,1 100,75"
+        android:fillColor="#80FF9D42"/>
 </vector>
