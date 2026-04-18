@@ -177,7 +177,7 @@ fun AutoFixSettingsScreen(
                             Icon(
                                 Icons.Default.AccountTree,
                                 contentDescription = null,
-                                tint = AnekonColors.Teal,
+                                tint = AnekonColors.Accent,
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
@@ -200,11 +200,11 @@ fun AutoFixSettingsScreen(
                             onValueChange = { preferredBranches = it },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = AnekonColors.Teal,
+                                focusedBorderColor = AnekonColors.Accent,
                                 unfocusedBorderColor = AnekonColors.BackgroundTertiary,
                                 focusedTextColor = AnekonColors.TextPrimary,
                                 unfocusedTextColor = AnekonColors.TextPrimary,
-                                cursorColor = AnekonColors.Teal
+                                cursorColor = AnekonColors.Accent
                             ),
                             shape = RoundedCornerShape(12.dp),
                             placeholder = {
@@ -248,7 +248,7 @@ fun AutoFixSettingsScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AnekonColors.Amber,
+                    containerColor = AnekonColors.Accent,
                     contentColor = AnekonColors.BackgroundPrimary
                 ),
                 shape = RoundedCornerShape(12.dp)
@@ -308,7 +308,7 @@ private fun SettingsSection(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleSmall,
-        color = AnekonColors.Teal,
+        color = AnekonColors.Accent,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier.padding(vertical = 8.dp)
     )
@@ -337,7 +337,7 @@ private fun SettingsToggleItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = AnekonColors.Teal,
+                tint = AnekonColors.Accent,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -357,8 +357,8 @@ private fun SettingsToggleItem(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = AnekonColors.Amber,
-                    checkedTrackColor = AnekonColors.Amber.copy(alpha = 0.3f),
+                    checkedThumbColor = AnekonColors.Accent,
+                    checkedTrackColor = AnekonColors.Accent.copy(alpha = 0.3f),
                     uncheckedThumbColor = AnekonColors.TextMuted,
                     uncheckedTrackColor = AnekonColors.BackgroundTertiary
                 )
@@ -393,7 +393,7 @@ private fun SettingsSliderItem(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = AnekonColors.Teal,
+                    tint = AnekonColors.Accent,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -406,12 +406,12 @@ private fun SettingsSliderItem(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(AnekonColors.Amber.copy(alpha = 0.2f))
+                        .background(AnekonColors.Accent.copy(alpha = 0.2f))
                         .padding(horizontal = 12.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = valueLabel,
-                        color = AnekonColors.Amber,
+                        color = AnekonColors.Accent,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -423,8 +423,8 @@ private fun SettingsSliderItem(
                 valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
                 steps = valueRange.last - valueRange.first - 1,
                 colors = SliderDefaults.colors(
-                    thumbColor = AnekonColors.Amber,
-                    activeTrackColor = AnekonColors.Amber,
+                    thumbColor = AnekonColors.Accent,
+                    activeTrackColor = AnekonColors.Accent,
                     inactiveTrackColor = AnekonColors.BackgroundTertiary
                 )
             )
@@ -453,7 +453,7 @@ private fun ProviderSelector(
                 Icon(
                     Icons.Default.Psychology,
                     contentDescription = null,
-                    tint = AnekonColors.Amber,
+                    tint = AnekonColors.Accent,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -491,7 +491,7 @@ private fun ProviderOption(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) AnekonColors.Amber.copy(alpha = 0.2f)
+            containerColor = if (isSelected) AnekonColors.Accent.copy(alpha = 0.2f)
             else AnekonColors.BackgroundTertiary
         ),
         shape = RoundedCornerShape(12.dp)
@@ -512,7 +512,7 @@ private fun ProviderOption(
                     AIProviderType.LOCAL -> Icons.Default.Computer
                 },
                 contentDescription = null,
-                tint = if (isSelected) AnekonColors.Amber else AnekonColors.Teal,
+                tint = if (isSelected) AnekonColors.Accent else AnekonColors.Accent,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -564,7 +564,7 @@ private fun ProviderOption(
                 Icon(
                     Icons.Default.CheckCircle,
                     contentDescription = "Seleccionado",
-                    tint = AnekonColors.Amber
+                    tint = AnekonColors.Accent
                 )
             }
         }

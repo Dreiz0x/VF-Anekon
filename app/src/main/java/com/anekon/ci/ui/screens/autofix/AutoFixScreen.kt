@@ -73,7 +73,7 @@ fun AutoFixScreen(
                     Icon(
                         Icons.Default.Refresh,
                         contentDescription = "Actualizar",
-                        tint = AnekonColors.Teal
+                        tint = AnekonColors.Accent
                     )
                 }
             },
@@ -87,7 +87,7 @@ fun AutoFixScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = AnekonColors.Amber)
+                CircularProgressIndicator(color = AnekonColors.Accent)
             }
         } else if (failedBuilds.isEmpty()) {
             // Empty state
@@ -227,7 +227,7 @@ private fun FailedBuildCard(
                 Text(
                     text = build.branch,
                     style = MaterialTheme.typography.bodySmall,
-                    color = AnekonColors.Teal
+                    color = AnekonColors.Accent
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Icon(
@@ -281,14 +281,14 @@ private fun FailedBuildCard(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
-                        color = AnekonColors.Amber,
+                        color = AnekonColors.Accent,
                         strokeWidth = 2.dp
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Analizando con IA...",
                         style = MaterialTheme.typography.bodySmall,
-                        color = AnekonColors.Amber
+                        color = AnekonColors.Accent
                     )
                 }
             }
@@ -306,7 +306,7 @@ private fun FailedBuildCard(
                         onClick = onAnalyze,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = AnekonColors.Amber,
+                            containerColor = AnekonColors.Accent,
                             contentColor = AnekonColors.BackgroundPrimary
                         ),
                         shape = RoundedCornerShape(12.dp)
@@ -326,7 +326,7 @@ private fun FailedBuildCard(
                     onClick = onViewLogs,
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = AnekonColors.Teal
+                        contentColor = AnekonColors.Accent
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -382,14 +382,14 @@ private fun AnalysisResultCard(result: AIAnalysisResult) {
                 Icon(
                     Icons.Default.AutoAwesome,
                     contentDescription = null,
-                    tint = AnekonColors.Amber,
+                    tint = AnekonColors.Accent,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Análisis de IA",
                     style = MaterialTheme.typography.titleSmall,
-                    color = AnekonColors.Amber,
+                    color = AnekonColors.Accent,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.weight(1f))

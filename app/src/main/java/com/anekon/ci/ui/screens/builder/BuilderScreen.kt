@@ -101,11 +101,11 @@ fun BuilderScreen() {
                         label = { Text("Nombre de la app") },
                         placeholder = { Text("Ej: MiApp, TaskMaster...") },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = AnekonColors.Amber,
+                            focusedBorderColor = AnekonColors.Accent,
                             unfocusedBorderColor = AnekonColors.TextMuted,
-                            focusedLabelColor = AnekonColors.Amber,
+                            focusedLabelColor = AnekonColors.Accent,
                             unfocusedLabelColor = AnekonColors.TextMuted,
-                            cursorColor = AnekonColors.Amber,
+                            cursorColor = AnekonColors.Accent,
                             focusedTextColor = AnekonColors.TextPrimary,
                             unfocusedTextColor = AnekonColors.TextPrimary
                         ),
@@ -126,9 +126,9 @@ fun BuilderScreen() {
                             .height(120.dp),
                         placeholder = { Text("Ej: Una app para gestionar tareas diarias...") },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = AnekonColors.Amber,
+                            focusedBorderColor = AnekonColors.Accent,
                             unfocusedBorderColor = AnekonColors.TextMuted,
-                            cursorColor = AnekonColors.Amber,
+                            cursorColor = AnekonColors.Accent,
                             focusedTextColor = AnekonColors.TextPrimary,
                             unfocusedTextColor = AnekonColors.TextPrimary
                         ),
@@ -224,7 +224,7 @@ fun BuilderScreen() {
                         ) {
                             if (isGenerating) {
                                 CircularProgressIndicator(
-                                    color = AnekonColors.Amber,
+                                    color = AnekonColors.Accent,
                                     modifier = Modifier.size(48.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
@@ -237,7 +237,7 @@ fun BuilderScreen() {
                                 Icon(
                                     imageVector = Icons.Default.Code,
                                     contentDescription = null,
-                                    tint = AnekonColors.Teal,
+                                    tint = AnekonColors.Accent,
                                     modifier = Modifier.size(64.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
@@ -279,7 +279,7 @@ fun BuilderScreen() {
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AnekonColors.Amber,
+                        containerColor = AnekonColors.Accent,
                         contentColor = AnekonColors.BackgroundPrimary
                     ),
                     shape = RoundedCornerShape(12.dp),
@@ -314,8 +314,8 @@ private fun StepIndicator(
                 .clip(RoundedCornerShape(50))
                 .background(
                     when {
-                        isCurrent -> AnekonColors.Amber
-                        isActive -> AnekonColors.Teal
+                        isCurrent -> AnekonColors.Accent
+                        isActive -> AnekonColors.Accent
                         else -> AnekonColors.BackgroundSecondary
                     }
                 ),
@@ -361,7 +361,7 @@ private fun PlatformCard(
             .then(
                 if (isSelected) Modifier.border(
                     2.dp,
-                    AnekonColors.Amber,
+                    AnekonColors.Accent,
                     RoundedCornerShape(16.dp)
                 ) else Modifier
             ),
@@ -378,7 +378,7 @@ private fun PlatformCard(
             Icon(
                 imageVector = platform.icon,
                 contentDescription = null,
-                tint = if (isSelected) AnekonColors.Amber else AnekonColors.Teal,
+                tint = if (isSelected) AnekonColors.Accent else AnekonColors.Accent,
                 modifier = Modifier.size(40.dp)
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -402,7 +402,7 @@ private fun FeatureChip(
     Card(
         modifier = modifier.clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) AnekonColors.Amber.copy(alpha = 0.2f)
+            containerColor = if (isSelected) AnekonColors.Accent.copy(alpha = 0.2f)
                             else AnekonColors.BackgroundSecondary
         ),
         shape = RoundedCornerShape(12.dp)
@@ -415,7 +415,7 @@ private fun FeatureChip(
                 imageVector = if (isSelected) Icons.Default.CheckCircle
                              else Icons.Default.Circle,
                 contentDescription = null,
-                tint = if (isSelected) AnekonColors.Amber
+                tint = if (isSelected) AnekonColors.Accent
                        else AnekonColors.TextMuted,
                 modifier = Modifier.size(20.dp)
             )
