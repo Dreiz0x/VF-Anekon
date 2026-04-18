@@ -54,7 +54,7 @@ fun ProjectsScreen() {
                 }
                 FloatingActionButton(
                     onClick = { showAddDialog = true },
-                    containerColor = AnekonColors.Amber,
+                    containerColor = AnekonColors.Accent,
                     contentColor = AnekonColors.BackgroundPrimary,
                     modifier = Modifier.size(48.dp)
                 ) {
@@ -88,7 +88,7 @@ fun ProjectsScreen() {
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AnekonColors.Amber,
+                            selectedContainerColor = AnekonColors.Accent,
                             selectedLabelColor = AnekonColors.BackgroundPrimary,
                             containerColor = AnekonColors.BackgroundSecondary,
                             labelColor = AnekonColors.TextMuted
@@ -184,7 +184,7 @@ private fun ProjectCard(
                         .background(
                             when (project.status) {
                                 ProjectStatus.HEALTHY -> AnekonColors.Success
-                                ProjectStatus.BUILDING -> AnekonColors.Amber
+                                ProjectStatus.BUILDING -> AnekonColors.Accent
                                 ProjectStatus.ERROR -> AnekonColors.Error
                                 ProjectStatus.IDLE -> AnekonColors.TextMuted
                             }
@@ -239,7 +239,7 @@ private fun ProjectCard(
                         tint = when (project.latestWorkflow.status) {
                             WorkflowStatus.SUCCESS -> AnekonColors.Success
                             WorkflowStatus.FAILED -> AnekonColors.Error
-                            WorkflowStatus.RUNNING -> AnekonColors.Amber
+                            WorkflowStatus.RUNNING -> AnekonColors.Accent
                             else -> AnekonColors.TextMuted
                         },
                         modifier = Modifier.size(16.dp)
@@ -274,7 +274,7 @@ private fun ProjectStat(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = AnekonColors.Teal,
+            tint = AnekonColors.Accent,
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -316,11 +316,11 @@ private fun AddProjectDialog(
                     onValueChange = { name = it },
                     label = { Text("Nombre del proyecto") },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = AnekonColors.Amber,
+                        focusedBorderColor = AnekonColors.Accent,
                         unfocusedBorderColor = AnekonColors.TextMuted,
-                        focusedLabelColor = AnekonColors.Amber,
+                        focusedLabelColor = AnekonColors.Accent,
                         unfocusedLabelColor = AnekonColors.TextMuted,
-                        cursorColor = AnekonColors.Amber,
+                        cursorColor = AnekonColors.Accent,
                         focusedTextColor = AnekonColors.TextPrimary,
                         unfocusedTextColor = AnekonColors.TextPrimary
                     ),
@@ -343,7 +343,7 @@ private fun AddProjectDialog(
                             onClick = { selectedType = type },
                             label = { Text(type) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = AnekonColors.Amber,
+                                selectedContainerColor = AnekonColors.Accent,
                                 selectedLabelColor = AnekonColors.BackgroundPrimary,
                                 containerColor = AnekonColors.BackgroundTertiary,
                                 labelColor = AnekonColors.TextSecondary
@@ -358,7 +358,7 @@ private fun AddProjectDialog(
             Button(
                 onClick = { onConfirm(name, selectedType) },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AnekonColors.Amber,
+                    containerColor = AnekonColors.Accent,
                     contentColor = AnekonColors.BackgroundPrimary
                 ),
                 shape = RoundedCornerShape(12.dp)

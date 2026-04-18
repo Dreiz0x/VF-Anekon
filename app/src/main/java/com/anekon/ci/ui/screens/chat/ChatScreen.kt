@@ -54,7 +54,7 @@ fun ChatScreen() {
                 Text(
                     text = "Powered by MiniMax",
                     style = MaterialTheme.typography.bodySmall,
-                    color = AnekonColors.Teal
+                    color = AnekonColors.Accent
                 )
             }
             IconButton(onClick = { /* Settings */ }) {
@@ -107,9 +107,9 @@ fun ChatScreen() {
                     )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AnekonColors.Amber,
+                    focusedBorderColor = AnekonColors.Accent,
                     unfocusedBorderColor = AnekonColors.BackgroundSecondary,
-                    cursorColor = AnekonColors.Amber,
+                    cursorColor = AnekonColors.Accent,
                     focusedTextColor = AnekonColors.TextPrimary,
                     unfocusedTextColor = AnekonColors.TextPrimary
                 ),
@@ -128,7 +128,7 @@ fun ChatScreen() {
                         isTyping = true
                     }
                 },
-                containerColor = AnekonColors.Amber,
+                containerColor = AnekonColors.Accent,
                 contentColor = AnekonColors.BackgroundPrimary,
                 modifier = Modifier.size(48.dp)
             ) {
@@ -159,7 +159,7 @@ private fun EmptyChat() {
             Icon(
                 imageVector = Icons.Default.AutoAwesome,
                 contentDescription = null,
-                tint = AnekonColors.Amber,
+                tint = AnekonColors.Accent,
                 modifier = Modifier.size(40.dp)
             )
         }
@@ -195,7 +195,7 @@ private fun QuickActionChip(text: String) {
         label = { Text(text) },
         colors = SuggestionChipDefaults.suggestionChipColors(
             containerColor = AnekonColors.BackgroundSecondary,
-            labelColor = AnekonColors.Teal
+            labelColor = AnekonColors.Accent
         ),
         shape = RoundedCornerShape(20.dp)
     )
@@ -212,7 +212,7 @@ private fun MessageBubble(message: ChatMessage) {
                 modifier = Modifier
                     .size(36.dp)
                     .clip(RoundedCornerShape(50))
-                    .background(AnekonColors.Teal),
+                    .background(AnekonColors.Accent),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -226,7 +226,7 @@ private fun MessageBubble(message: ChatMessage) {
         }
         Card(
             colors = CardDefaults.cardColors(
-                containerColor = if (message.isFromUser) AnekonColors.Amber
+                containerColor = if (message.isFromUser) AnekonColors.Accent
                                 else AnekonColors.BackgroundSecondary
             ),
             shape = RoundedCornerShape(
@@ -274,7 +274,7 @@ private fun TypingIndicator() {
             modifier = Modifier
                 .size(36.dp)
                 .clip(RoundedCornerShape(50))
-                .background(AnekonColors.Teal),
+                .background(AnekonColors.Accent),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -316,7 +316,7 @@ private fun TypingDot() {
         modifier = Modifier
             .size(8.dp)
             .clip(RoundedCornerShape(50))
-            .background(AnekonColors.Teal.copy(alpha = alpha))
+            .background(AnekonColors.Accent.copy(alpha = alpha))
     ) {}
 }
 
