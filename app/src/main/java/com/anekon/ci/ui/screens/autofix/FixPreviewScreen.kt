@@ -103,14 +103,14 @@ fun FixPreviewScreen(
                             Icon(
                                 Icons.Default.Psychology,
                                 contentDescription = null,
-                                tint = AnekonColors.Amber,
+                                tint = AnekonColors.Accent,
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = "Análisis de IA",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = AnekonColors.Amber,
+                                color = AnekonColors.Accent,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.weight(1f))
@@ -173,14 +173,14 @@ fun FixPreviewScreen(
                             Icon(
                                 Icons.Default.Difference,
                                 contentDescription = null,
-                                tint = AnekonColors.Teal,
+                                tint = AnekonColors.Accent,
                                 modifier = Modifier.size(24.dp)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = "Cambios propuestos",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = AnekonColors.Teal,
+                                color = AnekonColors.Accent,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
@@ -259,11 +259,11 @@ fun FixPreviewScreen(
                             onValueChange = { commitMessage = it },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = AnekonColors.Teal,
+                                focusedBorderColor = AnekonColors.Accent,
                                 unfocusedBorderColor = AnekonColors.BackgroundTertiary,
                                 focusedTextColor = AnekonColors.TextPrimary,
                                 unfocusedTextColor = AnekonColors.TextPrimary,
-                                cursorColor = AnekonColors.Teal
+                                cursorColor = AnekonColors.Accent
                             ),
                             shape = RoundedCornerShape(12.dp)
                         )
@@ -355,7 +355,7 @@ fun FixPreviewScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = filePath,
-                        color = AnekonColors.Teal,
+                        color = AnekonColors.Accent,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -436,7 +436,7 @@ private fun DiffView(
                 val color = when {
                     line.startsWith("+") && !line.startsWith("+++") -> AnekonColors.Success
                     line.startsWith("-") && !line.startsWith("---") -> AnekonColors.Error
-                    line.startsWith("@@") -> AnekonColors.Amber
+                    line.startsWith("@@") -> AnekonColors.Accent
                     else -> AnekonColors.TextMuted
                 }
                 Text(
