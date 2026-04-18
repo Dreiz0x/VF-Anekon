@@ -30,6 +30,8 @@ object AppModule {
 
     private const val GITHUB_BASE_URL = "https://api.github.com/"
 
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "anekon_preferences")
+
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
