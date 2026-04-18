@@ -3,6 +3,7 @@ package com.anekon.ci.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.anekon.ci.data.api.GitHubApiService
 import com.anekon.ci.data.local.AnekonDatabase

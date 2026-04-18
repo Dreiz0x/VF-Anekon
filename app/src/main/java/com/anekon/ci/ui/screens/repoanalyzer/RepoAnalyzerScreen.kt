@@ -74,13 +74,13 @@ fun RepoAnalyzerScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(AnekonColors.Amber.copy(alpha = 0.2f)),
+                                .background(AnekonColors.Accent.copy(alpha = 0.2f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 Icons.Default.Search,
                                 contentDescription = null,
-                                tint = AnekonColors.Amber,
+                                tint = AnekonColors.Accent,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -122,7 +122,7 @@ fun RepoAnalyzerScreen(
                         onClick = { selectedTab = index },
                         label = { Text(tab) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AnekonColors.Amber,
+                            selectedContainerColor = AnekonColors.Accent,
                             selectedLabelColor = AnekonColors.BackgroundPrimary
                         )
                     )
@@ -208,8 +208,8 @@ private fun ReposTab(
                 placeholder = { Text("Ej: github.com/miusuario/miapp-android") },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AnekonColors.Amber,
-                    cursorColor = AnekonColors.Amber
+                    focusedBorderColor = AnekonColors.Accent,
+                    cursorColor = AnekonColors.Accent
                 ),
                 leadingIcon = {
                     Icon(Icons.Default.Link, contentDescription = null, tint = AnekonColors.TextMuted)
@@ -223,7 +223,7 @@ private fun ReposTab(
                 onClick = onAnalyze,
                 enabled = repoUrl.isNotBlank() && !isAnalyzing,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = AnekonColors.Amber),
+                colors = ButtonDefaults.buttonColors(containerColor = AnekonColors.Accent),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 if (isAnalyzing) {
@@ -279,7 +279,7 @@ private fun RecentRepoCard(repo: RepoInfo) {
                         when (repo.buildStatus) {
                             BuildStatus.SUCCESS -> AnekonColors.Success.copy(alpha = 0.2f)
                             BuildStatus.FAILED -> AnekonColors.Error.copy(alpha = 0.2f)
-                            BuildStatus.RUNNING -> AnekonColors.Amber.copy(alpha = 0.2f)
+                            BuildStatus.RUNNING -> AnekonColors.Accent.copy(alpha = 0.2f)
                             BuildStatus.UNKNOWN -> AnekonColors.TextMuted.copy(alpha = 0.2f)
                         }
                     ),
@@ -296,7 +296,7 @@ private fun RecentRepoCard(repo: RepoInfo) {
                     tint = when (repo.buildStatus) {
                         BuildStatus.SUCCESS -> AnekonColors.Success
                         BuildStatus.FAILED -> AnekonColors.Error
-                        BuildStatus.RUNNING -> AnekonColors.Amber
+                        BuildStatus.RUNNING -> AnekonColors.Accent
                         BuildStatus.UNKNOWN -> AnekonColors.TextMuted
                     },
                     modifier = Modifier.size(24.dp)
@@ -395,7 +395,7 @@ private fun AnalysisTab(
                     onClick = onStartAnalysis,
                     enabled = !isAnalyzing,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = AnekonColors.Amber),
+                    colors = ButtonDefaults.buttonColors(containerColor = AnekonColors.Accent),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     if (isAnalyzing) {
@@ -518,7 +518,7 @@ private fun AnalysisStep(
                 .background(
                     when {
                         isComplete -> AnekonColors.Success
-                        isActive -> AnekonColors.Amber
+                        isActive -> AnekonColors.Accent
                         else -> AnekonColors.TextMuted.copy(alpha = 0.3f)
                     }
                 ),
@@ -718,7 +718,7 @@ dependencies {
                     Button(
                         onClick = { onReviewChanges(sampleChanges) },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = AnekonColors.Amber),
+                        colors = ButtonDefaults.buttonColors(containerColor = AnekonColors.Accent),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
@@ -789,7 +789,7 @@ private fun FileChangeCard(
                         .background(
                             when (change.changeType) {
                                 ChangeType.CREATE -> AnekonColors.Success.copy(alpha = 0.2f)
-                                ChangeType.MODIFY -> AnekonColors.Amber.copy(alpha = 0.2f)
+                                ChangeType.MODIFY -> AnekonColors.Accent.copy(alpha = 0.2f)
                                 ChangeType.DELETE -> AnekonColors.Error.copy(alpha = 0.2f)
                             }
                         )
@@ -804,7 +804,7 @@ private fun FileChangeCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = when (change.changeType) {
                             ChangeType.CREATE -> AnekonColors.Success
-                            ChangeType.MODIFY -> AnekonColors.Amber
+                            ChangeType.MODIFY -> AnekonColors.Accent
                             ChangeType.DELETE -> AnekonColors.Error
                         }
                     )

@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg_primary">#0A1410</color>
-    <color name="bg_secondary">#0E1D17</color>
-    <color name="accent_amber">#FFC107</color>
-    <color name="accent_teal">#4DB6AC</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#E8E8E8</color>
-    <color name="text_muted">#BDBDBD</color>
+    <!-- Phoenix Orange Gradient -->
+    <color name="phoenix_orange">#FF5722</color>
+    <color name="phoenix_orange_light">#FF9D42</color>
+    <color name="phoenix_orange_dark">#E87B18</color>
+
+    <!-- Background Cream -->
+    <color name="background_primary">#F9F7F2</color>
+    <color name="background_secondary">#FFFFFF</color>
+    <color name="background_tertiary">#F0EEE9</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_muted">#424242</color>
+
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="error">#E53935</color>
+    <color name="warning">#FF9800</color>
+
+    <!-- Legacy Colors (deprecated but kept for compatibility) -->
+    <color name="bg_primary">#F9F7F2</color>
+    <color name="bg_secondary">#FFFFFF</color>
+    <color name="accent_amber">#FF5722</color>
+    <color name="accent_teal">#4CAF50</color>
 </resources>

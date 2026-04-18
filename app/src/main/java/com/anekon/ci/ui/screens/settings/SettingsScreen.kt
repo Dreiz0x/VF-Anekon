@@ -360,7 +360,7 @@ fun SettingsScreen(
                     description = "Claude 3",
                     badge = "PAGO",
                     badgeColor = AnekonColors.Accent,
-                    icon = Icons.Default.Human,
+                    icon = Icons.Default.Face,
                     value = anthropicKey,
                     onValueChange = { anthropicKey = it; anthropicSaved = false },
                     isSaved = anthropicSaved,
@@ -790,7 +790,7 @@ private fun ApiKeyInput(
                     OutlinedButton(
                         onClick = {
                             isEditing = false
-                            if (!isSaved) value = ""
+                            if (!isSaved) onValueChange("")
                         },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = AnekonColors.TextMuted),

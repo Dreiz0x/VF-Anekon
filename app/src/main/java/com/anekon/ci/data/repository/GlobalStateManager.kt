@@ -2,10 +2,14 @@ package com.anekon.ci.data.repository
 
 import com.anekon.ci.data.local.PreferencesManager
 import com.anekon.ci.domain.model.AIProviderType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -62,27 +66,7 @@ class GlobalStateManager @Inject constructor(
     // ============ INITIALIZATION ============
     // Se llama desde Application class al iniciar
     suspend fun loadAllFromDisk() {
-        _minimaxApiKey.value = preferencesManager.minimaxApiKey.let {
-            // Flow to State
-            var key = ""
-            kotlinx.coroutines.flow.first { k -> key = k; true }
-            key
-        }
-
-        // Load from preferences directly
-        preferencesManager.minimaxApiKey.collect { key ->
-            _minimaxApiKey.value = key
-        }
-    }
-
-    // Método simplificado para cargar un valor
-    private suspend inline fun <reified T> loadFromPreferences(
-        flow: Flow<T>,
-        stateFlow: MutableStateFlow<T>
-    ) {
-        flow.collect { value ->
-            stateFlow.value = value
-        }
+        _minimaxApiKey.value = preferencesManager.minimaxApiKey.first()
     }
 
     // ============ API KEYS ============
@@ -109,6 +93,7 @@ class GlobalStateManager @Inject constructor(
     fun getApiKey(provider: AIProviderType): String {
         return when (provider) {
             AIProviderType.MINIMAX_PRO -> _minimaxApiKey.value
+            AIProviderType.MINIMAX_FREE -> _minimaxApiKey.value
             AIProviderType.OPENAI -> _openaiApiKey.value
             AIProviderType.ANTHROPIC -> _anthropicApiKey.value
             AIProviderType.GEMINI -> _geminiApiKey.value
@@ -157,54 +142,26 @@ class GlobalStateManager @Inject constructor(
     // ============ INIT FROM DISK (ASYNC) ============
     suspend fun initialize() {
         // Load API keys
-        preferencesManager.minimaxApiKey.collect { key ->
-            _minimaxApiKey.value = key
-        }
+        _minimaxApiKey.value = preferencesManager.minimaxApiKey.first()
     }
 
     suspend fun initializeAll() {
         // Load all values from disk into memory
-        kotlinx.coroutines.coroutineScope {
-            kotlinx.coroutines.launch {
-                preferencesManager.minimaxApiKey.collect { _minimaxApiKey.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.openaiApiKey.collect { _openaiApiKey.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.anthropicApiKey.collect { _anthropicApiKey.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.geminiApiKey.collect { _geminiApiKey.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.githubToken.collect { _githubToken.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.githubUsername.collect { _githubUsername.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.selectedRepo.collect { _selectedRepo.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.selectedAIProvider.collect {
-                    _selectedAIProvider.value = try {
-                        AIProviderType.valueOf(it)
-                    } catch (e: Exception) {
-                        AIProviderType.GEMINI
-                    }
-                }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.isFirstLaunch.collect { _isFirstLaunch.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.autoFixEnabled.collect { _autoFixEnabled.value = it }
-            }
-            kotlinx.coroutines.launch {
-                preferencesManager.notificationsEnabled.collect { _notificationsEnabled.value = it }
-            }
+        _minimaxApiKey.value = preferencesManager.minimaxApiKey.first()
+        _openaiApiKey.value = preferencesManager.openaiApiKey.first()
+        _anthropicApiKey.value = preferencesManager.anthropicApiKey.first()
+        _geminiApiKey.value = preferencesManager.geminiApiKey.first()
+        _githubToken.value = preferencesManager.githubToken.first()
+        _githubUsername.value = preferencesManager.githubUsername.first()
+        _selectedRepo.value = preferencesManager.selectedRepo.first()
+        _selectedAIProvider.value = try {
+            AIProviderType.valueOf(preferencesManager.selectedAIProvider.first())
+        } catch (e: Exception) {
+            AIProviderType.GEMINI
         }
+        _isFirstLaunch.value = preferencesManager.isFirstLaunch.first()
+        _autoFixEnabled.value = preferencesManager.autoFixEnabled.first()
+        _notificationsEnabled.value = preferencesManager.notificationsEnabled.first()
     }
 
     // ============ GETTERS SYNC ============
