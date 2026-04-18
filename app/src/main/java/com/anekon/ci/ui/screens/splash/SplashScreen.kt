@@ -132,18 +132,12 @@ fun SplashScreen(
 
 @Composable
 private fun PhoenixLogoSvg(modifier: Modifier = Modifier) {
-    Box(
+    Image(
+        painter = painterResource(id = com.anekon.ci.R.drawable.ic_phoenix_logo),
+        contentDescription = "Anekon Phoenix Logo",
         modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = com.anekon.ci.R.drawable.ic_phoenix_logo),
-            contentDescription = "Anekon Phoenix Logo",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit,
-            alpha = 1f
-        )
-    }
+        contentScale = ContentScale.Fit
+    )
 }
 
 @Composable
