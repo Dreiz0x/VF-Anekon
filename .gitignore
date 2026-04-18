@@ -1,0 +1,65 @@
+# Built application files
+*.apk 
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+local.properties.example
+
+# IntelliJ
+*.iml
+.idea/
+idea/
+*.ipr
+*.iws
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Android Studio
+captures/
+.externalNativeBuild
+.cxx
+local.properties
+
+# Keystore files - NEVER COMMIT THESE
+*.jks
+*.keystore
+release.jks
+
+# Signing configs - Use GitHub Secrets instead
+signing.properties
+
+# Log Files
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Lint
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+
+# Release
+outputs.json

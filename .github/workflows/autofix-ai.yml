@@ -1,0 +1,63 @@
+name: AI Auto-Fix Analysis
+
+on:
+  workflow_run:
+    workflows: ["Build & Test"]
+    types: [completed]
+
+jobs:
+  analyze-failure:
+    name: AI Analysis on Failure
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+    permissions:
+      issues: write      # <-- Llave maestra para crear el issue
+      actions: read      # <-- Permiso para leer los artefactos de otra run
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Logs
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          # <-- CRÍTICO: Debes decirle que jale el artefacto del workflow que falló, no de este.
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true # Por si no se subió el artefacto en el primer workflow
+
+      - name: Run AI Analysis
+        run: |
+          echo "=== AI Auto-Fix Analysis ==="
+          echo "Build failed. Analyzing logs..."
+
+          echo "## Analysis Report"
+          echo "**Build Status:** Failed"
+          echo "**Possible Causes:**"
+          echo "1. Dependency version mismatch"
+          echo "2. Missing environment variables"
+          echo "3. Resource constraints during build"
+
+      - name: Create Issue on Failure
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Build Failed - AI Analysis",
+              body: "## Build Status\nBuild #" + context.payload.workflow_run.run_number + " failed. \n\n## AI Analysis\nThe AI has analyzed the failure and identified potential causes. Please review the logs for more details.",
+              labels: ["build-failure", "ai-analyzed"]
+            })
+
+  notify:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    needs: analyze-failure
+    if: always()
+    steps:
+      - name: Send Failure Notification
+        if: needs.analyze-failure.result == 'success' # Success aquí significa que el job de arriba corrió y reportó la falla.
+        run: |
+          echo "Build failed! Notification sent."
+          

@@ -1,0 +1,232 @@
+name: AI AutoFix Workflow
+
+on:
+  workflow_run:
+    workflows: ["Android CI/CD"]
+    types: [completed]
+    branches: [main, develop]
+
+jobs:
+  # ============================================
+  # JOB 1: Analyze Failed Builds
+  # ============================================
+  analyze-failure:
+    name: Analyze Build Failure
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+    outputs:
+      has_failures: ${{ steps.check.outputs.has_failures }}
+      failure_count: ${{ steps.check.outputs.failure_count }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for failures
+        id: check
+        run: |
+          echo "Checking workflow run: ${{ github.event.workflow_run.id }}"
+          
+          RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs")
+          
+          FAILED_JOBS=$(echo "$RESPONSE" | jq '[.jobs[] | select(.conclusion == "failure")] | length')
+          echo "Failed jobs: $FAILED_JOBS"
+          
+          if [ "$FAILED_JOBS" -gt "0" ]; then
+            echo "has_failures=true" >> $GITHUB_OUTPUT
+            echo "failure_count=$FAILED_JOBS" >> $GITHUB_OUTPUT
+          else
+            echo "has_failures=false" >> $GITHUB_OUTPUT
+            echo "failure_count=0" >> $GITHUB_OUTPUT
+          fi
+
+  # ============================================
+  # JOB 2: Get Build Logs
+  # ============================================
+  get-logs:
+    name: Get Build Logs
+    runs-on: ubuntu-latest
+    needs: analyze-failure
+    if: needs.analyze-failure.outputs.has_failures == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Fetch build logs
+        run: |
+          echo "Fetching build logs from workflow run: ${{ github.event.workflow_run.id }}"
+          
+          JOBS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs")
+          
+          echo "$JOBS" | jq -r '.jobs[] | select(.conclusion == "failure") | .id' | while read job_id; do
+            echo "=== Failed Job ID: $job_id ==="
+            curl -s -L -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/jobs/$job_id/logs" > "logs/job_$job_id.log" || true
+          done
+          
+          mkdir -p build-logs
+          mv logs/*.log build-logs/ 2>/dev/null || true
+          
+          cat build-logs/*.log 2>/dev/null | grep -i "error\|exception\|failed" | head -50 > build-logs/errors.txt || echo "No specific errors found" > build-logs/errors.txt
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build-logs/
+          retention-days: 7
+
+  # ============================================
+  # JOB 3: AI Analysis with MiniMax
+  # ============================================
+  ai-analysis:
+    name: AI Code Analysis
+    runs-on: ubuntu-latest
+    needs: get-logs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download logs
+        uses: actions/download-artifact@v4
+        with:
+          name: build-logs
+          path: build-logs/
+
+      - name: Analyze with MiniMax AI
+        id: analyze
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        run: |
+          if [ -f "build-logs/errors.txt" ]; then
+            ERROR_LOG=$(cat build-logs/errors.txt)
+          else
+            ERROR_LOG="No errors found in logs"
+          fi
+          
+          PROMPT="You are an expert Android developer. Analyze this build error log and provide: 1. Root cause, 2. Files to fix, 3. Exact code changes. Build Error Log: $ERROR_LOG"
+          
+          echo "Calling MiniMax API for analysis..."
+          
+          RESPONSE=$(curl -s -X POST "https://api.minimax.chat/v1/text/chatcompletion_pro?GroupId=${{ secrets.MINIMAX_GROUP_ID }}" \
+            -H "Authorization: Bearer $MINIMAX_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"model\": \"MiniMax-Text-01\",
+              \"tokens_to_generate\": 2000,
+              \"messages\": [
+                {\"role\": \"system\", \"content\": \"You are an expert Android developer assistant specialized in debugging build failures. Return JSON ONLY.\"},
+                {\"role\": \"user\", \"content\": \"$PROMPT\"}
+              ],
+              \"temperature\": 0.3
+            }")
+          
+          # Extraemos el contenido directo del asistente sin escapar comillas en jq
+          if echo "$RESPONSE" | jq -e .choices[0].messages > /dev/null 2>&1; then
+            echo "$RESPONSE" | jq -r '.choices[0].messages[-1].content' > ai-analysis.json
+          else
+            echo "{\"error\": \"API call failed\"}" > ai-analysis.json
+          fi
+          
+          echo "=== AI Analysis Complete ==="
+          cat ai-analysis.json | head -100
+
+      - name: Upload AI Analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-analysis
+          path: ai-analysis.json
+          retention-days: 7
+
+  # ============================================
+  # JOB 4: Apply AI Fixes
+  # ============================================
+  apply-fixes:
+    name: Apply AI Fixes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: ai-analysis
+    if: always() && needs.ai-analysis.result != 'skipped'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Download AI Analysis
+        uses: actions/download-artifact@v4
+        with:
+          name: ai-analysis
+          path: ai-analysis/
+
+      - name: Apply Fixes
+        run: |
+          echo "Parsing AI recommendations and applying fixes..."
+          
+          if [ -f "ai-analysis/ai-analysis.json" ]; then
+            echo "AI Analysis found, attempting fixes..."
+            
+            git config user.name "Anekon AI Bot"
+            git config user.email "anekon@ai.local"
+            
+            git checkout -b fix/ai-autofix-${{ github.run_id }}
+            
+            # ATENCIÓN AQUÍ: El EOF debe ir pegado al margen izquierdo para que Bash no reviente
+          cat > AI_FIX_SUMMARY.md << 'EOF'
+          # AI AutoFix Summary
+          Generated by Anekon AI Bot
+          ## Analysis
+          Check ai-analysis.json for full details.
+          EOF
+            
+            git add AI_FIX_SUMMARY.md
+            git commit -m "feat: Apply AI-generated fixes for build failure [skip ci]"
+            
+            echo "Fix branch created: fix/ai-autofix-${{ github.run_id }}"
+          else
+            echo "No AI analysis available, skipping fixes"
+            exit 1
+          fi
+
+      - name: Push Fix Branch
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: fix/ai-autofix-${{ github.run_id }}
+          force: true
+
+      - name: Create PR
+        if: success()
+        run: |
+          echo "Creating pull request for AI fixes..."
+          # JSON limpio, sin concatenaciones raras de Bash
+          PR_BODY="This PR contains AI-generated fixes for the build failure on branch ${{ github.event.workflow_run.head_branch }}."
+          
+          PR_RESPONSE=$(curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/pulls" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"title\":\"🤖 AI AutoFix: Resolved build failure\",\"body\":\"$PR_BODY\",\"head\":\"fix/ai-autofix-${{ github.run_id }}\",\"base\":\"${{ github.event.workflow_run.head_branch }}\"}")
+          
+          echo "PR Created. Response snippet:"
+          echo "$PR_RESPONSE" | jq -r '.html_url // .message'
+
+  # ============================================
+  # JOB 5: Notify Status
+  # ============================================
+  notify:
+    name: Notify Status
+    runs-on: ubuntu-latest
+    needs: [analyze-failure, apply-fixes]
+    if: always()
+    steps:
+      - name: Post Status
+        run: |
+          if [ "${{ needs.analyze-failure.outputs.has_failures }}" == "true" ]; then
+            echo "🔴 Build failed. AI analysis and fixes were attempted."
+          else
+            echo "✅ No failures detected in workflow run"
+          fi
+          

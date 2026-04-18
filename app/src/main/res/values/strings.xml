@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Anekon</string>
+    <string name="home">Inicio</string>
+    <string name="builder">Constructor</string>
+    <string name="chat">Chat</string>
+    <string name="projects">Proyectos</string>
+    <string name="settings">Ajustes</string>
+    <string name="github_token">GitHub Token</string>
+    <string name="minimax_api_key">MiniMax API Key</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="loading">Cargando...</string>
+    <string name="error">Error</string>
+    <string name="retry">Reintentar</string>
+    <string name="success">Éxito</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="edit">Editar</string>
+    <string name="create">Crear</string>
+    <string name="send">Enviar</string>
+    <string name="type_message">Escribe tu mensaje...</string>
+    <string name="build_app">Construir App</string>
+    <string name="analyze_error">Analizar Error</string>
+    <string name="apply_fix">Aplicar Fix</string>
+    <string name="commit_push">Commit y Push</string>
+    <string name="no_projects">No hay proyectos</string>
+    <string name="no_workflows">No hay workflows</string>
+    <string name="build_success">Build exitoso</string>
+    <string name="build_failed">Build fallido</string>
+    <string name="ai_thinking">Pensando...</string>
+    <string name="welcome_anekon">Bienvenido a Anekon</string>
+    <string name="app_idea_hint">Describe tu idea de app...</string>
+    <string name="app_name_hint">Nombre de la app</string>
+    <string name="select_platform">Selecciona plataforma</string>
+    <string name="select_features">Selecciona características</string>
+    <string name="generate_code">Generar Código</string>
+</resources>

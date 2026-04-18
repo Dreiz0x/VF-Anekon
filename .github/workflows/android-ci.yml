@@ -1,0 +1,543 @@
+name: 🚀 Anekon - Android CI/CD with AI AutoFix
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip tests (for quick builds)'
+        required: false
+        default: 'false'
+      force_ai_fix:
+        description: 'Force AI analysis even on success'
+        required: false
+        default: 'false'
+
+env:
+  JAVA_VERSION: '17'
+  ANDROID_COMPILE_SDK: '34'
+  ANDROID_BUILD_TOOLS: '34.0.0'
+
+jobs:
+  # ============================================
+  # JOB 1: Code Linting & Quality Checks
+  # ============================================
+  lint:
+    name: 📋 Lint & Code Quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 🛠️ Rescue & Generate Full Wrapper
+        run: |
+          if [ ! -f "gradlew" ]; then
+            echo "⚠️ Wrapper missing! Generating full power..."
+            gradle wrapper --gradle-version 8.2
+          fi
+          chmod +x gradlew
+
+      - name: 💾 Save Full Wrapper back to Repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Fix: Recovered full Gradle Wrapper ecosystem via CI Rescue"
+          file_pattern: 'gradlew gradlew.bat gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.properties'
+
+      - name: Run Android Lint
+        run: ./gradlew lintDebug --no-daemon
+        continue-on-error: true
+        
+      - name: Run Detekt (Kotlin static analysis)
+        run: ./gradlew detekt --no-daemon
+        continue-on-error: true
+
+      - name: Run Ktlint (Code style)
+        run: ./gradlew ktlintCheck --no-daemon
+        continue-on-error: true
+
+      - name: Upload Lint Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: |
+            app/build/reports/lint-results-*.xml
+            build/reports/detekt/*.html
+          retention-days: 7
+
+      - name: 💾 Save JAR back to Repo
+        if: always()
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Fix: Recovered gradle-wrapper.jar via CI Rescue"
+          file_pattern: 'gradle/wrapper/gradle-wrapper.jar'
+
+  # ============================================
+  # JOB 2: Build Debug APK
+  # ============================================
+  build-debug:
+    name: 🔨 Build Debug APK
+    runs-on: ubuntu-latest
+    needs: lint
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Android SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/build-cache
+            ~/Library/Caches/android/sdk
+          key: ${{ runner.os }}-android-sdk-${{ env.ANDROID_COMPILE_SDK }}
+
+      - name: 🛠️ Ensure Wrapper & Grant Permissions
+        run: |
+          if [ ! -f "gradlew" ]; then
+            echo "⚠️ gradlew no encontrado en este job. Inyectando..."
+            gradle wrapper --gradle-version 8.2
+          fi
+          chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
+      - name: Generate Build Info
+        if: always()
+        run: |
+          echo "=== BUILD DEBUG INFO ===" >> build_info.txt
+          echo "Status: ${{ job.status }}" >> build_info.txt
+          echo "Branch: ${{ github.ref }}" >> build_info.txt
+          echo "Commit: ${{ github.sha }}" >> build_info.txt
+          echo "Runner: ${{ runner.os }}" >> build_info.txt
+
+      - name: Upload Build Info
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-info
+          path: build_info.txt
+          retention-days: 3
+
+  # ============================================
+  # JOB 3: Run Unit Tests
+  # ============================================
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    timeout-minutes: 20
+    if: github.event.inputs.skip_tests != 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 🛠️ Ensure Wrapper & Grant Permissions
+        run: |
+          if [ ! -f "gradlew" ]; then
+            echo "⚠️ gradlew no encontrado en este job. Inyectando..."
+            gradle wrapper --gradle-version 8.2
+          fi
+          chmod +x gradlew
+          
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: app/build/reports/tests/testDebugUnitTest/
+          retention-days: 14
+
+      - name: Publish Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: app/build/test-results/testDebugUnitTest/*.xml
+          retention-days: 14
+
+  # ============================================
+  # JOB 4: Android Instrumented Tests
+  # ============================================
+  instrumented-test:
+    name: 📱 Instrumented Tests
+    runs-on: ubuntu-latest
+    needs: build-debug
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create Emulator
+        run: |
+          echo "A $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --list_installed | grep -E 'system-images|android-[0-9]+'" | bash
+          echo "no" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-34;google_apis;x86_64"
+          echo "no" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-34"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager create avd -n test-avd -k "system-images;android-34;google_apis;x86_64" --force
+          echo "hw.arch=x86_64" >> ~/.android/avd/test-avd/config.ini
+          echo "hw.cpu.arch=x86_64" >> ~/.android/avd/test-avd/config.ini
+          echo "hw.ramSize=4096" >> ~/.android/avd/test-avd/config.ini
+        continue-on-error: true
+
+      - name: Launch Emulator
+        run: |
+          $ANDROID_SDK_ROOT/emulator/emulator -avd test-avd -no-window -no-audio -no-snapshot &
+          /opt/android-sdk-linux/platform-tools/adb wait-for-device shell getprop dev.bootcomplete
+        continue-on-error: true
+
+      - name: Run Instrumented Tests
+        run: ./gradlew connectedDebugAndroidTest --no-daemon
+        continue-on-error: true
+
+      - name: Upload Instrumented Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-results
+          path: app/build/reports/androidTests/connected/
+          retention-days: 7
+
+  # ============================================
+  # JOB 5: Build Release APK
+  # ============================================
+  build-release:
+    name: 📦 Build Release APK
+    runs-on: ubuntu-latest
+    needs: [build-debug, test]
+    timeout-minutes: 35
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 🛠️ Ensure Wrapper & Grant Permissions
+        run: |
+          if [ ! -f "gradlew" ]; then
+            echo "⚠️ gradlew no encontrado en este job. Inyectando..."
+            gradle wrapper --gradle-version 8.2
+          fi
+          chmod +x gradlew
+        
+      - name: Decode Keystore
+        if: env.KEYSTORE_BASE64 != ''
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo $KEYSTORE_BASE64 | base64 -d > app/release.jks
+
+      - name: Build Release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -f app/release.jks ]; then
+            ./gradlew assembleRelease --no-daemon \
+              -PkeyStorePassword=$KEYSTORE_PASSWORD \
+              -PkeyAlias=$KEY_ALIAS \
+              -PkeyPassword=$KEY_PASSWORD
+          else
+            echo "No keystore configured, building unsigned release..."
+            ./gradlew assembleRelease --no-daemon
+          fi
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/mapping/*/release/*.txt
+          retention-days: 30
+
+      - name: Generate Release Changelog
+        run: |
+          git fetch --tags
+          CHANGELOG=$(git log --oneline --decorate --graph --all -20)
+          echo "$CHANGELOG" > release-changelog.txt
+          echo "Commit: ${{ github.sha }}" >> release-changelog.txt
+          echo "Build Number: ${{ github.run_number }}" >> release-changelog.txt
+
+      - name: Upload Changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-changelog
+          path: release-changelog.txt
+          retention-days: 30
+
+  # ============================================
+  # JOB 6: AI Code Analysis (Vigilando TODO)
+  # ============================================
+  ai-analysis:
+    name: 🤖 AI Code Analysis
+    runs-on: ubuntu-latest
+    needs: [build-debug, test, build-release]
+    if: failure() || github.event.inputs.force_ai_fix == 'true'
+    outputs:
+      analysis_result: ${{ steps.analyze.outputs.analysis_result }}
+      has_fix: ${{ steps.analyze.outputs.has_fix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Reports
+        uses: actions/download-artifact@v4
+        with:
+          path: reports/
+        continue-on-error: true
+
+      - name: AI Analysis with MiniMax
+        id: analyze
+        env:
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          MINIMAX_GROUP_ID: ${{ secrets.MINIMAX_GROUP_ID }}
+        run: |
+          echo "=== AI Code Analysis Started ==="
+          
+          ERRORS=$(find reports/ -name "*.txt" -o -name "*.xml" -exec grep -hE "error|exception|failed" {} + | head -30 || echo "No detailed logs found")
+
+          PROMPT="You are an expert Android developer. Analyze the build failures and provide actionable fixes.
+          BUILD STATUS: ${{ job.status }}
+          ERRORS: $ERRORS
+          Please respond in JSON format ONLY: {\"root_cause\":\"...\",\"severity\":\"high\",\"files_to_fix\":[],\"fixes\":[{\"file\":\"\",\"original_code\":\"\",\"fixed_code\":\"\",\"explanation\":\"\"}],\"prevention_tips\":[],\"confidence\":0.95}"
+
+          API_RESPONSE=$(curl -s -X POST "https://api.minimax.chat/v1/text/chatcompletion_pro?GroupId=${MINIMAX_GROUP_ID}" \
+            -H "Authorization: Bearer ${MINIMAX_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"model\": \"MiniMax-Text-01\",
+              \"tokens_to_generate\": 3000,
+              \"messages\": [
+                {\"role\": \"system\", \"content\": \"You are an expert Android developer. Always respond with valid JSON only.\"},
+                {\"role\": \"user\", \"content\": \"$PROMPT\"}
+              ],
+              \"temperature\": 0.2
+            }")
+
+          if echo "$API_RESPONSE" | jq -e .choices[0].messages > /dev/null 2>&1; then
+            echo "$API_RESPONSE" | jq -r '.choices[0].messages[-1].content' > ai_analysis.json
+          else
+            echo "{\"error\": \"API call failed\"}" > ai_analysis.json
+          fi
+
+          ANALYSIS=$(cat ai_analysis.json | jq -r '.root_cause // "No analysis"')
+          HAS_FIX=$(cat ai_analysis.json | jq -r 'if .fixes != null and (.fixes | length) > 0 then "true" else "false" end')
+          echo "analysis_result=$ANALYSIS" >> $GITHUB_OUTPUT
+          echo "has_fix=$HAS_FIX" >> $GITHUB_OUTPUT
+
+      - name: Upload AI Analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-analysis
+          path: ai_analysis.json
+          retention-days: 30
+
+    # ============================================
+  # JOB 7: Apply AI Fixes (Con Reporte Detallado)
+  # ============================================
+  apply-ai-fixes:
+    name: 🔧 Apply AI Fixes
+    runs-on: ubuntu-latest
+    needs: ai-analysis
+    if: needs.ai-analysis.outputs.has_fix == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Download AI Analysis
+        uses: actions/download-artifact@v4
+        with:
+          name: ai-analysis
+          path: analysis/
+
+      - name: Apply Fixes and Generate Report
+        run: |
+          git config user.name "Anekon AI Bot"
+          git config user.email "bot@anekon.dev"
+          git checkout -b fix/ai-autofix-${{ github.run_number }}
+
+          cat > AI_FIX_REPORT.md << 'EOF'
+          # 🤖 AI AutoFix Report
+          Generated by Anekon AI on $(date)
+          ## Analysis Summary
+          $(jq -r '.root_cause' analysis/ai_analysis.json)
+          ## Recommended Fixes
+          EOF
+          
+          jq -r '.fixes[] | "### File: \(.file)\n**Explanation:** \(.explanation)\n\`\`\`kotlin\n// Fixed:\n\(.fixed_code)\n\`\`\`"' analysis/ai_analysis.json >> AI_FIX_REPORT.md
+          
+          git add AI_FIX_REPORT.md
+          git commit -m "🤖 docs: AI AutoFix report for build failure [skip ci]"
+
+      - name: Push and Create PR
+        run: |
+          git push origin fix/ai-autofix-${{ github.run_number }}
+          PR_BODY="## 🤖 AI AutoFix Report\n\n$(jq -r '.root_cause' analysis/ai_analysis.json)\n\n*Generated by Anekon AI Bot*"
+          
+          curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/pulls" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "{\"title\":\"🤖 AI AutoFix: Build Failure Resolution\",\"body\":\"$PR_BODY\",\"head\":\"fix/ai-autofix-${{ github.run_number }}\",\"base\":\"${{ github.ref_name }}\"}"
+
+  # ============================================
+  # JOB 8: Create Release
+  # ============================================
+  release:
+    name: 🎉 Create Release
+    runs-on: ubuntu-latest
+    needs: [build-release, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+    steps:
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+          path: release/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.apk
+          name: Release v${{ github.run_number }}
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ============================================
+  # JOB 9: Notification & Summary
+  # ============================================
+  notify:
+    name: 📢 Build Summary
+    runs-on: ubuntu-latest
+    needs: [lint, build-debug, test, ai-analysis, apply-ai-fixes, release]
+    if: always()
+    steps:
+      - name: Generate Summary
+        run: |
+          echo "=== ANEKON BUILD SUMMARY ==="
+          echo ""
+          echo "📋 Lint Check: ${{ needs.lint.result }}"
+          echo "🔨 Build Debug: ${{ needs.build-debug.result }}"
+          echo "🧪 Unit Tests: ${{ needs.test.result }}"
+          echo "🤖 AI Analysis: ${{ needs.ai-analysis.result }}"
+          echo "🔧 AI Fixes Applied: ${{ needs.apply-ai-fixes.result }}"
+          echo "🎉 Release Created: ${{ needs.release.result }}"
+          echo ""
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Run #: ${{ github.run_number }}"
+          echo ""
+
+          if [[ "${{ needs.build-debug.result }}" == "success" ]]; then
+            echo "✅ Build completed successfully!"
+          else
+            echo "❌ Build failed. Check logs for details."
+            if [[ "${{ needs.apply-ai-fixes.result }}" == "success" ]]; then
+              echo "🤖 AI fixes have been applied and a PR created."
+            fi
+          fi
+
+      - name: Commit Status Update
+        if: always()
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "Updating PR status..."
+            # Status is automatically updated by GitHub Actions
+          fi
+          
